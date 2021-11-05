@@ -1,6 +1,6 @@
 <?
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");
-$APPLICATION->SetTitle("Обработка импорта данных");
+$APPLICATION->SetTitle("импорт данных");
 
 $file = fopen($_FILES['import']["tmp_name"], 'r') or die("не удалось открыть файл");
 #Получение списка полей
@@ -50,7 +50,8 @@ while ($user = $rsExclusiongUsers->Fetch()) {
 $newUserPasswords = "";
 #Добавляем пользователей на сайт
 foreach ($Users as $user) {
-	#Если пользователь есть на сайте пропускаем его
+	#Если пользователь есть на сайте пропускаем его.
+	#array_combine возвращает false если количество полей и значений не совпадает, тоже пропускаем.
 	if (in_array($user["Email"], $listRegisterUsers) || $user == false) {
 		#Убираем из списка всех пользователей, что были на сайте. 
 		#После выполнения цикла foreach в $RegisterUsers останутся только пользователи которых нужно деактивировать.
@@ -72,7 +73,8 @@ foreach ($Users as $user) {
 	$newUserPasswords .= $user["Компания"]." ".$user["Email"] ." ".$password."<br>";
 }
 
-echo $newUserPasswords;
+#Выводим пароли для новых учетных записей.
+echo $newUserPasswords ? $newUserPasswords : "Все пользователи уже есть на сайте";
 
 #Деактивируем учетные записи пользователей
 foreach ($RegisterUsers as $rec) {
