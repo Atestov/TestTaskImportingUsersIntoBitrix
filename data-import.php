@@ -51,14 +51,14 @@ $newUserPasswords = "";
 #Добавляем пользователей на сайт
 foreach ($Users as $user) {
 	#Если пользователь есть на сайте пропускаем его
-	if (in_array($user["Email"], $listRegisterUsers) || $user==false) {
+	if (in_array($user["Email"], $listRegisterUsers) || $user == false) {
 		#Убираем из списка всех пользователей, что были на сайте. 
 		#После выполнения цикла foreach в $RegisterUsers останутся только пользователи которых нужно деактивировать.
-		unset($RegisterUsers[$user["LOGIN"]]);
+		unset($RegisterUsers[$user["Email"]]);
 		continue;
 	};
 	$createUser = new CUser;
-	$password = random_int(10000000, 99999999); #В качестве пароля зададим пятизначное число
+	$password = random_int(100000, 999999); #В качестве пароля зададим число
 	$arFields = Array(
 		"EMAIL"             => $user["Email"],
 		"LOGIN"             => $user["Email"],
@@ -73,5 +73,11 @@ foreach ($Users as $user) {
 }
 
 echo $newUserPasswords;
+
+#Деактивируем учетные записи пользователей
+foreach ($RegisterUsers as $rec) {
+	$user = new CUser;
+	$user->Update($rec["ID"], Array("ACTIVE" => "F"));
+}
 
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");
